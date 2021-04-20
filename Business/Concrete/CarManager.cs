@@ -1,4 +1,6 @@
 ﻿using Business.Abstract;
+using Business.Constants;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
@@ -15,37 +17,41 @@ namespace Business.Concrete
             _carDal = carDal;
         }
 
-        public void Add(Car car)
+        public IResult Add(Car car)
         {
-            if (car.CarName.Length>=2 && car.DailyPrice>0)
+            if (car.CarName.Length >= 2 && car.DailyPrice > 0)
             {
                 _carDal.Add(car);
-            } 
+                return new SuccessResult(Messages.Add);
+            }
+            return new ErrorResult(Messages.Fail);
         }
 
-        public void Delete(Car car)
+        public IResult Delete(Car car)
         {
             _carDal.Delete(car);
+            return new SuccessResult(Messages.Delete);
         }
 
-        public List<Car> GetAll()
+        public IDataResult<List<Car>> GetAll()
         {
-            return _carDal.GetAll();
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(), Messages.Listed);
         }
 
-        public List<Car> GetCarsByBrandId(int id)
+        public IDataResult<List<Car>> GetCarsByBrandId(int id)
         {
-            return _carDal.GetAll(c => c.Id == id);
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(c => c.Id == id), Messages.Listed);
         }
 
-        public List<Car> GetCarsByColorId(int id)
+        public IDataResult<List<Car>> GetCarsByColorId(int id)
         {
-            return _carDal.GetAll(c => c.Id == id);
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(c => c.Id == id), Messages.Listed);
         }
 
-        public void Update(Car car)
+        public IResult Update(Car car)
         {
-            throw new NotImplementedException();
+            _carDal.Update(car);
+            return new SuccessResult(Messages.Update);
         }
     }
 }
