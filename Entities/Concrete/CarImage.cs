@@ -7,10 +7,10 @@ namespace Entities.Concrete
 {
     public class CarImage : IEntity
     {
-        int CarImageId { get; set; }
-        int CarId { get; set; }
-        string ImagePath { get; set; }
-        DateTime Date { get; set; }
+        public int CarImageId { get; set; }
+        public int CarId { get; set; }
+        public string ImagePath { get; set; }
+        public DateTime Date { get; set; }
 
     }
 }

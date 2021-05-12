@@ -11,5 +11,6 @@ namespace Business.Constants
         public static string Delete = "Silindi";
         public static string Update = "Değiştirildi";
         public static string Listed = "Listelendi";
+        public static string CategoryLimitExceded = "5 adetten fazla resim eklenemez";
     }
 }
