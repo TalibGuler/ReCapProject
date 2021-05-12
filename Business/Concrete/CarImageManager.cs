@@ -5,6 +5,7 @@ using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Business.Concrete
@@ -12,8 +13,8 @@ namespace Business.Concrete
     public class CarImageManager : ICarImageService
     {
         ICarImageDal _carImageDal;
-
-        public CarImageManager(ICarImageDal carImageDal)
+        ICarImageService _carImageService;
+        public CarImageManager(ICarImageDal carImageDal, ICarImageService _carImageService)
         {
             _carImageDal = carImageDal;
         }
@@ -52,12 +53,21 @@ namespace Business.Concrete
 
         private IResult CheckIfCarImageLimitExceded()
         {
-            var result = _carImageDal.GetAll();
+            var result = _carImageService.GetAll();
             if (result.Data.Count > 5)
             {
                 return new ErrorResult(Messages.CategoryLimitExceded);
             }
             return new SuccessResult();
+        }
+
+        private IResult CheckIfCarImageNull(string imagePath)
+        {
+            var result = _carImageDal.GetAll(c => c.ImagePath == imagePath).ToList();
+            if (result!=null)
+            {
+                return new ErrorResult(Messages.Car);
+            }
         }
     }
 }
