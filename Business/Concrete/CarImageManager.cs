@@ -1,8 +1,12 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,36 +17,39 @@ namespace Business.Concrete
     public class CarImageManager : ICarImageService
     {
         ICarImageDal _carImageDal;
-        ICarImageService _carImageService;
-        public CarImageManager(ICarImageDal carImageDal, ICarImageService _carImageService)
+       
+        public CarImageManager(ICarImageDal carImageDal)
         {
             _carImageDal = carImageDal;
         }
 
-        public IResult Add(CarImage carImage)
+       // [ValidationAspect(typeof(CarImageValidator))]
+        public IResult Add( CarImage carImage)
         {
-            if (true)
-            {
-
-            }
+            BusinessRules.Run(CheckIfImageOverLimit(carImage.CarId));
+            carImage.Date = DateTime.Now.Date;
             _carImageDal.Add(carImage);
             return new SuccessResult(Messages.Add);
         }
-
         public IResult Delete(CarImage carImage)
         {
             _carImageDal.Delete(carImage);
             return new SuccessResult(Messages.Delete);
         }
 
-        public IDataResult<List<CarImage>> GetAll()
+        public IDataResult<List<CarImage>> GetAllCarImages()
         {
-            return new SuccessDataResult<List<CarImage>>(_carImageDal.GetAll(), Messages.Listed);
+            return new SuccessDataResult<List<CarImage>>(_carImageDal.GetAll());
         }
 
-        public IDataResult<List<CarImage>> GetById(int id)
+        public IDataResult<CarImage> GetCarImage(int id)
         {
-            return new SuccessDataResult<List<CarImage>>(_carImageDal.GetAll(c => c.CarImageId == id), Messages.Listed);
+            return new SuccessDataResult<CarImage>(_carImageDal.Get(x => x.CarImageId == id), Messages.Listed);
+        }
+
+        public IDataResult<List<CarImage>> GetCarImageByCarId(int carId)
+        {
+            return new SuccessDataResult<List<CarImage>>(_carImageDal.GetAll(x => x.CarId == carId), Messages.Listed);
         }
 
         public IResult Update(CarImage carImage)
@@ -51,23 +58,13 @@ namespace Business.Concrete
             return new SuccessResult(Messages.Update);
         }
 
-        private IResult CheckIfCarImageLimitExceded()
+        private IResult CheckIfImageOverLimit(int id)
         {
-            var result = _carImageService.GetAll();
-            if (result.Data.Count > 5)
-            {
-                return new ErrorResult(Messages.CategoryLimitExceded);
-            }
+            var result = _carImageDal.GetAll(x => x.CarId == id).Count;
+            if (result >= 5) return new ErrorResult(Messages.Fail);
             return new SuccessResult();
         }
 
-        private IResult CheckIfCarImageNull(string imagePath)
-        {
-            var result = _carImageDal.GetAll(c => c.ImagePath == imagePath).ToList();
-            if (result!=null)
-            {
-                return new ErrorResult(Messages.Car);
-            }
-        }
+       
     }
 }
