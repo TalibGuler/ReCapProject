@@ -10,6 +10,7 @@ using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -90,5 +91,10 @@ namespace Business.Concrete
             return null;
         }
 
+        [CacheAspect]
+        public IDataResult<List<CarDetailDto>> GetCarDetails()
+        {
+            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarDetails());
+        }
     }
 }
