@@ -16,7 +16,7 @@ namespace DataAccess.Concrete.EntityFramework
         {
             using (ReCapContext context = new ReCapContext())
             {
-                return context.Rentals.SingleOrDefault(b => b.Id == id);
+                return context.Rentals.SingleOrDefault(b => b.CarId == id);
             }
         }
 
