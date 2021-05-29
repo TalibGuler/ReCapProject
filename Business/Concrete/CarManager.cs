@@ -31,17 +31,6 @@ namespace Business.Concrete
         [CacheRemoveAspect("ICarService.Get")]
         public IResult Add(Car car)
         {
-            //if (car.CarName.Length >= 2 && car.DailyPrice > 0)
-            //{
-            //    _carDal.Add(car);
-            //    return new SuccessResult(Messages.Add);
-            //}
-
-            //Business codes
-            
-
-            //ValidationTool.Validate(new CarValidator(), car);
-
             _carDal.Add(car);
             return new SuccessResult(Messages.Add);
         }
